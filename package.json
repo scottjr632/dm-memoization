@@ -22,13 +22,25 @@
     "web-vitals": "^0.2.2"
   },
   "scripts": {
+    "style:check": "eslint --ext .js --ext .jsx --ext tsx --ext ts ./src --cache",
+    "style:fix": "eslint --ext .js --ext .jsx --ext tsx --ext ts ./src --quiet --fix --cache",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "semi": [
+        "error",
+        "always"
+      ],
+      "quotes": [
+        2,
+        "single"
+      ]
+    }
   },
   "browserslist": {
     "production": [

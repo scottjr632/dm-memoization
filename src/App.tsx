@@ -1,38 +1,62 @@
-import * as React from "react"
+import React, { useState } from 'react';
 import {
-  ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
+  Button,
+  ChakraProvider,
+  Flex,
+  Input,
   theme,
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+} from '@chakra-ui/react';
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
-  </ChakraProvider>
-)
+import Message from './Message';
+import localMessages from './messages.json';
+
+const getNewId = (ids: {id: number}[]) => Math.max(...ids.map(v => v.id)) + 1;
+
+export const App = () => {
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState(localMessages);
+
+  const sendMessage = () => {
+    setMessages(messages => {
+      return [...messages, {
+        id: getNewId(messages),
+        content: input,
+        date: new Date().toISOString(),
+        username: 'Me',
+        avatar: '',
+      }];
+    });
+    setInput('');
+  };
+
+  const handleEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter')
+      sendMessage();
+  };
+
+  return (
+    <ChakraProvider theme={theme}>
+      <Box maxW='1080px' marginX='auto'>
+        <Box
+          marginX='auto'
+          height='calc(100vh - 2.5rem - 1.2rem)'
+          overflow='scroll'
+        >
+          {messages.map(message => (
+            <Message key={message.id} {...message} />
+          ))}
+        </Box>
+        <Flex marginBottom='1.2rem'>
+          <Input
+            value={input}
+            placeholder='Press enter to send'
+            onKeyPress={handleEnter}
+            onChange={e => setInput(e.currentTarget.value)}
+          />
+          <Button onClick={sendMessage}>Send</Button>
+        </Flex>
+      </Box>
+    </ChakraProvider>
+  );
+};
